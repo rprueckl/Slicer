@@ -328,10 +328,22 @@ void qMRMLThreeDViewControllerWidget::setViewLabel(const QString& newViewLabel)
 
   d->ThreeDViewLabel = newViewLabel;
   d->ViewLabel->setText(d->ThreeDViewLabel);
+}
 
-  if (d->ViewLogic)
+//---------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setViewName(const QString& newViewName)
+{
+    Q_D(qMRMLThreeDViewControllerWidget);
+
+    if (d->ViewNode)
     {
-    d->ViewLogic->SetName(newViewLabel.toLatin1());
+      qCritical() << "qMRMLThreeDViewControllerWidget::setViewName should be called before setMRMLNode !";
+      return;
+    }
+
+    if (d->ViewLogic)
+    {
+      d->ViewLogic->SetName(newViewName.toLatin1());
     }
 }
 

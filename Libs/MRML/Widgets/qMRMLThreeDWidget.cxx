@@ -166,6 +166,13 @@ void qMRMLThreeDWidget::setViewLabel(const QString& newViewLabel)
 }
 
 //---------------------------------------------------------------------------
+void qMRMLThreeDWidget::setViewName(const QString& newViewName)
+{
+    Q_D(qMRMLThreeDWidget);
+    d->ThreeDController->setViewName(newViewName);
+}
+
+//---------------------------------------------------------------------------
 void qMRMLThreeDWidget::setQuadBufferStereoSupportEnabled(bool value)
 {
   Q_D(qMRMLThreeDWidget);

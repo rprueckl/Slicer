@@ -59,6 +59,10 @@ public:
   /// Get the label for the view (abbreviation for the view name)
   QString viewLabel()const;
 
+  /// Set view name
+  /// \note ViewName should be set before setMRMLNode() is called
+  void setViewName(const QString& newViewName);
+
   /// Set the color for the view
   void setViewColor(const QColor& newViewColor);
 

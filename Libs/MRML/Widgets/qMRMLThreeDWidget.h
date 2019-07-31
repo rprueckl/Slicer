@@ -81,6 +81,10 @@ public:
   /// \sa viewLabel()
   void setViewLabel(const QString& newViewLabel);
 
+  /// \sa qMRMLThreeDViewControllerWidget::viewName() (currently not existing)
+  /// \sa sliceName()
+  void setViewName(const QString& newViewName);
+
   /// \sa qMRMLThreeDViewControllerWidget::setQuadBufferStereoSupportEnabled
   Q_INVOKABLE void setQuadBufferStereoSupportEnabled(bool value);
 

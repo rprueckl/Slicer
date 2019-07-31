@@ -128,6 +128,7 @@ QWidget* qMRMLLayoutThreeDViewFactory::createViewFromNode(vtkMRMLAbstractViewNod
   qMRMLThreeDWidget* threeDWidget = new qMRMLThreeDWidget(this->layoutManager()->viewport());
   threeDWidget->setObjectName(QString("ThreeDWidget%1").arg(viewNode->GetLayoutLabel()));
   threeDWidget->setViewLabel(viewNode->GetLayoutLabel());
+  threeDWidget->setViewName(viewNode->GetLayoutName());
   QColor layoutColor = QColor::fromRgbF(viewNode->GetLayoutColor()[0],
                                         viewNode->GetLayoutColor()[1],
                                         viewNode->GetLayoutColor()[2]);
