@@ -114,6 +114,8 @@ public:
   static void updateSliceOrientationSelector(
       vtkMRMLSliceNode* sliceNode, QComboBox *sliceOrientationSelector);
 
+  void updateOrientationString(QString name, qMRMLOrientation orientation);
+
 public slots:
   /// Update widget state when the scene is modified
   void updateFromMRMLScene();

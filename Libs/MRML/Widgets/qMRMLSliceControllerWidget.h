@@ -153,6 +153,8 @@ public:
   /// Get the fit to window button (shown in the controller bar).
   Q_INVOKABLE QToolButton* fitToWindowToolButton();
 
+  void updateOrientationString(QString name, QString prefix, QString tooltip);
+
 public slots:
 
   virtual void setMRMLScene(vtkMRMLScene* newScene);

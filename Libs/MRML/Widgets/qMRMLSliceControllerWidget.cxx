@@ -1524,6 +1524,13 @@ qMRMLOrientation qMRMLSliceControllerWidgetPrivate::mrmlOrientation(const QStrin
   return obliqueOrientation;
 }
 
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::updateOrientationString(QString name, qMRMLOrientation orientation)
+{
+    this->SliceOrientationToDescription[name] = orientation;
+    updateWidgetFromMRMLSliceNode();
+}
+
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::onSegmentVisibilitySelectionChanged(QStringList selectedSegmentIDs)
 {
@@ -1593,6 +1600,13 @@ qMRMLSliceControllerWidget::qMRMLSliceControllerWidget(
 // --------------------------------------------------------------------------
 qMRMLSliceControllerWidget::~qMRMLSliceControllerWidget()
 {
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::updateOrientationString(QString name, QString prefix, QString tooltip)
+{
+    Q_D(qMRMLSliceControllerWidget);
+    d->updateOrientationString(name, qMRMLOrientation{ prefix, tooltip });
 }
 
 //---------------------------------------------------------------------------
