@@ -422,7 +422,7 @@ bool qSlicerDataDialogPrivate::checkAndHandleArchive(const QFileInfo& file)
       if (this->temporaryArchiveDirectory->isValid())
         {
         // C function in vtkArchive
-        if (unzip(file.absoluteFilePath().toStdString().c_str(), this->temporaryArchiveDirectory->path().toStdString().c_str()))
+        if (unzip(file.absoluteFilePath().toLatin1(), this->temporaryArchiveDirectory->path().toLatin1()))
           {
           this->addDirectory(QDir(this->temporaryArchiveDirectory->path()));
           return true;
