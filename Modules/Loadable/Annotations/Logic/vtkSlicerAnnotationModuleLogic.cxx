@@ -3329,6 +3329,8 @@ void vtkSlicerAnnotationModuleLogic::SetHierarchyAnnotationsLockFlag(vtkMRMLAnno
       childNode->SetLocked((flag ? 1 : 0));
       }
     } // for loop
+
+  children->Delete();
 }
 
 //---------------------------------------------------------------------------
