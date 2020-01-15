@@ -1645,9 +1645,11 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
   vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
 
   vtkNew<vtkMatrix4x4> matrixTransformToWorld;
+  bool updateTransform = false;
   if (tnode != 0 && tnode->IsTransformToWorldLinear())
     {
     tnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
+    updateTransform = true;
     }
 
   int ndnodes = model->GetNumberOfDisplayNodes();
@@ -1725,7 +1727,10 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
 
     vtkActor *actor = vtkActor::SafeDownCast(prop);
     vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
-    prop->SetUserMatrix(matrixTransformToWorld.GetPointer());
+    if (updateTransform)
+      {
+      prop->SetUserMatrix(matrixTransformToWorld.GetPointer());
+      }
 
     bool visible = modelDisplayNode->GetVisibility(this->GetMRMLViewNode()->GetID());
     prop->SetVisibility(visible);
