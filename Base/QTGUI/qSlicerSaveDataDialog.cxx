@@ -1350,7 +1350,12 @@ void qSlicerSaveDataDialogPrivate::onSceneFormatChanged()
   QComboBox* box = qobject_cast<QComboBox*>(
     this->FileWidget->cellWidget(sceneRow, FileFormatColumn));
   // Gray out all the nodes when saving scene as bundle
-  this->enableNodes(box->currentIndex() == 0);
+  bool greyout = false;
+  if (box->currentText().contains("mrb") || box->currentText().contains("cxp"))
+    {
+    greyout = true;
+    }
+  this->enableNodes(greyout);
 }
 
 //-----------------------------------------------------------------------------
