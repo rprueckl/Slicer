@@ -128,13 +128,13 @@ void qSlicerApplicationHelper::preInitializeApplication(
 
   // Allow a custom application name so that the settings
   // can be distinct for differently named applications
-  QString applicationName("Slicer");
-  if (argv0)
+  QString applicationName("CORTEXPLORER SCI");
+  /*if (argv0)
     {
     std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(argv0);
     applicationName = QString::fromLocal8Bit(name.c_str());
     applicationName.remove(QString("App-real"));
-    }
+    }*/
   QCoreApplication::setApplicationName(applicationName);
 
   QCoreApplication::setApplicationVersion(Slicer_MAIN_PROJECT_VERSION_FULL);

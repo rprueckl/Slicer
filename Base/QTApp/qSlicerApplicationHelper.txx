@@ -67,7 +67,7 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
     {
     return;
     }
-  splashScreen->showMessage(message, Qt::AlignBottom | Qt::AlignHCenter);
+  //splashScreen->showMessage(message, Qt::AlignBottom | Qt::AlignHCenter);
 }
 
 } // end of anonymous namespace
