@@ -685,6 +685,9 @@ public:
   /// since the last time it was read or written.
   bool GetModifiedSinceRead();
 
+  /// This is to sets the stored time to now and declare the scene unmodified.
+  void SetStoredTimeToNow();
+
   /// \brief Search the scene for storable nodes that are "ModifiedSinceRead".
   ///
   /// Returns true if at least 1 matching node is found.
