@@ -496,14 +496,28 @@ qSlicerLayoutManager* qSlicerApplication::layoutManager()const
 //-----------------------------------------------------------------------------
 QMainWindow* qSlicerApplication::mainWindow()const
 {
+  QSettings settings;
+  QString mainWindowObjectName = settings.value("MainWindow/ObjectName").toString();
+
   foreach(QWidget * widget, this->topLevelWidgets())
     {
     QMainWindow* window = qobject_cast<QMainWindow*>(widget);
     if (window)
       {
-      return window;
+      if (!mainWindowObjectName.isEmpty())
+        {
+        if (window->objectName() == mainWindowObjectName)
+          {
+          return window;
+          }
+        }
+      else
+        {
+        return window;
+        }
       }
     }
+
   return 0;
 }
 

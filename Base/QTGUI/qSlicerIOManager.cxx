@@ -7,6 +7,7 @@
 #include <QMetaProperty>
 #include <QProgressDialog>
 #include <QSettings>
+#include <QMainWindow>
 
 // CTK includes
 #include "ctkScreenshotDialog.h"
@@ -87,7 +88,7 @@ bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
     return false;
     }
   int max = (steps != 1 ? steps : 100);
-  this->ProgressDialog = new QProgressDialog("Loading file... ", "Cancel", 0, max);
+  this->ProgressDialog = new QProgressDialog("Loading file... ", "Cancel", 0, max, qSlicerApplication::application()->mainWindow());
   this->ProgressDialog->setWindowTitle(QString("Loading ..."));
   if (steps == 1)
     {
