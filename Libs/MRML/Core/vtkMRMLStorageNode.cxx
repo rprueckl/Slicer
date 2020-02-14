@@ -1143,6 +1143,12 @@ vtkTimeStamp vtkMRMLStorageNode::GetStoredTime()
   return *this->StoredTime;
 }
 
+//------------------------------------------------------------------------------
+vtkTimeStamp* vtkMRMLStorageNode::GetStoredTimePtr()
+{
+  return this->StoredTime;
+}
+
 //----------------------------------------------------------------------------
 bool vtkMRMLStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {

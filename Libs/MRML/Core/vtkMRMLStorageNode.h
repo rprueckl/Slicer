@@ -280,6 +280,10 @@ public:
   /// read in or written from.
   vtkTimeStamp GetStoredTime();
 
+  /// Return the last time stamp when a reference node has been
+  /// read in or written from. Pointer.
+  vtkTimeStamp* GetStoredTimePtr();
+
   /// Return true if the node can be read in. Used by ReadData to know
   /// if the file can be read into the reference node.
   /// Subclasses must reimplement the method.
