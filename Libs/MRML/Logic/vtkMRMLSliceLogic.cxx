@@ -189,7 +189,10 @@ struct BlendPipeline
   vtkNew<vtkImageExtractComponents> AddSubExtractAlpha;
   vtkNew<vtkImageAppendComponents> AddSubAppendRGBA;
   vtkNew<vtkImageCast> AddSubOutputCast;
+
+  vtkSmartPointer<vtkImageData> blackBackground;
   vtkNew<vtkImageBlend> Blend;
+  std::deque<SliceLayerInfo> oldLayers;
 };
 
 //----------------------------------------------------------------------------
@@ -1002,6 +1005,113 @@ bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::UpdateBlendLayers2(BlendPipeline* pipeline, const std::deque<SliceLayerInfo> &layers)
+{
+    const int blendPort = 0;
+    vtkMTimeType oldBlendMTime = pipeline->Blend->GetMTime();
+
+    bool backgroundLayerChanged = false;
+    bool layersChanged = false;
+
+    // check which updates are necessary
+    // number of layers was changed
+    if (pipeline->oldLayers.size() != layers.size())
+    {
+        layersChanged = true;
+
+        // previously, there was no background, but now there is one
+        if (pipeline->oldLayers.size() == 0)
+        {
+            backgroundLayerChanged = true;
+        }
+    }
+    else
+    {
+        // have foreground layers changed?
+        for (int i = 1; i < layers.size(); i++)
+        {
+            if (pipeline->oldLayers[i].BlendInput != layers[i].BlendInput)
+            {
+                layersChanged = true;
+            }
+        }
+    }
+    // background layer content change
+    if (pipeline->oldLayers.size() >= 1 && layers.size() >= 1 && pipeline->oldLayers[0].BlendInput != layers[0].BlendInput)
+    {
+        layersChanged = true;
+        backgroundLayerChanged = true;
+    }
+
+    if (layersChanged)
+    {
+        pipeline->Blend->RemoveAllInputs();
+
+        if (layers.size() > 0)
+        {
+            if (backgroundLayerChanged)
+            {
+                int dims[3];
+                GetBackgroundLayer()->GetSliceNode()->GetDimensions(dims);
+
+                pipeline->blackBackground = vtkSmartPointer<vtkImageData>::New();
+                createColorImage(pipeline->blackBackground, 4, dims);
+            }
+
+            pipeline->Blend->AddInputData(pipeline->blackBackground);
+        }
+
+        for (int i = 0; i < layers.size(); i++)
+        {
+            pipeline->Blend->AddInputConnection(layers[i].BlendInput);
+        }
+    }
+
+    // Update opacities
+    {
+        for (int i = 0; i < layers.size(); i++)
+        {
+            pipeline->Blend->SetOpacity(i+1, layers[i].Opacity);
+        }
+    }
+
+    // update old layers
+    pipeline->oldLayers = layers;
+
+    bool modified = pipeline->Blend->GetMTime() > oldBlendMTime;
+    return modified;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::createColorImage(vtkImageData* image, const unsigned int components, int* dims)
+{
+    assert(components == 1 || components == 4);
+
+    image->SetDimensions(dims[0], dims[1], 1);
+    image->AllocateScalars(VTK_UNSIGNED_CHAR, components);
+    for (unsigned int x = 0; x < dims[0]; x++)
+    {
+        for (unsigned int y = 0; y < dims[1]; y++)
+        {
+            unsigned char* pixel = static_cast<unsigned char*>(image->GetScalarPointer(x, y, 0));
+            if (components == 4)
+            {
+                pixel[0] = 0;
+                pixel[1] = 0;
+                pixel[2] = 0;
+                pixel[3] = 255;
+            }
+            else
+            {
+                pixel[0] = 255;
+            }
+        }
+    }
+
+    image->Modified();
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdatePipeline()
 {
   int modified = 0;
@@ -1105,11 +1215,11 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       backgroundImagePortUVW, foregroundImagePortUVW, this->SliceCompositeNode->GetForegroundOpacity(),
       labelImagePortUVW, this->SliceCompositeNode->GetLabelOpacity());
 
-    if (this->UpdateBlendLayers(this->Pipeline->Blend.GetPointer(), layers))
+    if (this->UpdateBlendLayers2(this->Pipeline, layers))
       {
       modified = 1;
       }
-    if (this->UpdateBlendLayers(this->PipelineUVW->Blend.GetPointer(), layersUVW))
+    if (this->UpdateBlendLayers2(this->PipelineUVW, layersUVW))
       {
       modified = 1;
       }

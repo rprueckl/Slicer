@@ -378,6 +378,8 @@ protected:
   /// re-add an input if it is not changed) because rebuilding of the pipeline
   /// is a relatively expensive operation.
   bool UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers);
+  bool UpdateBlendLayers2(BlendPipeline* pipeline, const std::deque<SliceLayerInfo> &layers);
+  void createColorImage(vtkImageData* image, const unsigned int components, int* dims);
 
   bool                        AddingSliceModelNodes;
   bool                        Initialized;
