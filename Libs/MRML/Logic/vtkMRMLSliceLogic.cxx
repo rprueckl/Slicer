@@ -1037,7 +1037,7 @@ bool vtkMRMLSliceLogic::UpdateBlendLayers2(BlendPipeline* pipeline, const std::d
     if (GetBackgroundLayer())
       {
       GetBackgroundLayer()->GetSliceNode()->GetDimensions(dims);
-      {
+      }
     else if (GetForegroundLayer())
       {
       GetForegroundLayer()->GetSliceNode()->GetDimensions(dims);
