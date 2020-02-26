@@ -1008,113 +1008,113 @@ bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceLogic::UpdateBlendLayers2(BlendPipeline* pipeline, const std::deque<SliceLayerInfo> &layers)
 {
-    const int blendPort = 0;
-    vtkMTimeType oldBlendMTime = pipeline->Blend->GetMTime();
+  const int blendPort = 0;
+  vtkMTimeType oldBlendMTime = pipeline->Blend->GetMTime();
 
-    bool blackBackgroundResizeRequired = false;
-    bool layersChanged = false;
+  bool blackBackgroundResizeRequired = false;
+  bool layersChanged = false;
 
-    // check which updates are necessary
-    // number of layers was changed
-    if (pipeline->oldLayers.size() != layers.size())
-      {
-      layersChanged = true;
-      }
-    else
-      {
-      // have foreground layers changed?
-      for (int i = 1; i < layers.size(); i++)
-        {
-        if (pipeline->oldLayers[i].BlendInput != layers[i].BlendInput)
-          {
-          layersChanged = true;
-          }
-        }
-      }
-
-    // determine if a resize of black background is required
-    int dims[3] = { 10, 10, 10 };
-    if (GetBackgroundLayer())
-      {
-      GetBackgroundLayer()->GetSliceNode()->GetDimensions(dims);
-      }
-    else if (GetForegroundLayer())
-      {
-      GetForegroundLayer()->GetSliceNode()->GetDimensions(dims);
-      }
-    if (pipeline->oldBlackBackgroundSize.size() != 3 ||
-      dims[0] != pipeline->oldBlackBackgroundSize[0] ||
-      dims[1] != pipeline->oldBlackBackgroundSize[1] ||
-      dims[2] != pipeline->oldBlackBackgroundSize[2])
-      {
-      layersChanged = true;
-      blackBackgroundResizeRequired = true;
-
-      pipeline->oldBlackBackgroundSize.clear();
-      pipeline->oldBlackBackgroundSize = { dims[0], dims[1], dims[2] };
-      }
-
-    // Update pipeline
-    if (layersChanged)
-      {
-      pipeline->Blend->RemoveAllInputs();
-
-      if (blackBackgroundResizeRequired)
-        {
-        pipeline->blackBackground = vtkSmartPointer<vtkImageData>::New();
-        createColorImage(pipeline->blackBackground, 4, dims);
-        }
-
-      pipeline->Blend->AddInputData(pipeline->blackBackground);
-
-      for (int i = 0; i < layers.size(); i++)
-        {
-        pipeline->Blend->AddInputConnection(layers[i].BlendInput);
-        }
-      }
-
-    // Update opacities
+  // check which updates are necessary
+  // number of layers was changed
+  if (pipeline->oldLayers.size() != layers.size())
     {
-      for (int i = 0; i < layers.size(); i++)
+    layersChanged = true;
+    }
+  else
+    {
+    // have foreground layers changed?
+    for (int i = 0; i < layers.size(); i++)
+      {
+      if (pipeline->oldLayers[i].BlendInput != layers[i].BlendInput)
         {
-        pipeline->Blend->SetOpacity(i+1, layers[i].Opacity);
+        layersChanged = true;
         }
+      }
     }
 
-    // update old layers
-    pipeline->oldLayers = layers;
+  // determine if a resize of black background is required
+  int dims[3] = { 10, 10, 10 };
+  if (GetBackgroundLayer())
+    {
+    GetBackgroundLayer()->GetSliceNode()->GetDimensions(dims);
+    }
+  else if (GetForegroundLayer())
+    {
+    GetForegroundLayer()->GetSliceNode()->GetDimensions(dims);
+    }
+  if (pipeline->oldBlackBackgroundSize.size() != 3 ||
+    dims[0] != pipeline->oldBlackBackgroundSize[0] ||
+    dims[1] != pipeline->oldBlackBackgroundSize[1] ||
+    dims[2] != pipeline->oldBlackBackgroundSize[2])
+    {
+    layersChanged = true;
+    blackBackgroundResizeRequired = true;
 
-    bool modified = pipeline->Blend->GetMTime() > oldBlendMTime;
-    return modified;
+    pipeline->oldBlackBackgroundSize.clear();
+    pipeline->oldBlackBackgroundSize = { dims[0], dims[1], dims[2] };
+    }
+
+  // Update pipeline
+  if (layersChanged)
+    {
+    pipeline->Blend->RemoveAllInputs();
+
+    if (blackBackgroundResizeRequired)
+      {
+      pipeline->blackBackground = vtkSmartPointer<vtkImageData>::New();
+      createColorImage(pipeline->blackBackground, 4, dims);
+      }
+
+    pipeline->Blend->AddInputData(pipeline->blackBackground);
+
+    for (int i = 0; i < layers.size(); i++)
+      {
+      pipeline->Blend->AddInputConnection(layers[i].BlendInput);
+      }
+    }
+
+  // Update opacities
+  {
+    for (int i = 0; i < layers.size(); i++)
+      {
+      pipeline->Blend->SetOpacity(i+1, layers[i].Opacity);
+      }
+  }
+
+  // update old layers
+  pipeline->oldLayers = layers;
+
+  bool modified = pipeline->Blend->GetMTime() > oldBlendMTime;
+  return modified;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::createColorImage(vtkImageData* image, const unsigned int components, int* dims)
 {
-    assert(components == 1 || components == 4);
+  assert(components == 1 || components == 4);
 
-    image->SetDimensions(dims[0], dims[1], 1);
-    image->AllocateScalars(VTK_UNSIGNED_CHAR, components);
-    for (unsigned int x = 0; x < dims[0]; x++)
+  image->SetDimensions(dims[0], dims[1], 1);
+  image->AllocateScalars(VTK_UNSIGNED_CHAR, components);
+  for (unsigned int x = 0; x < dims[0]; x++)
+    {
+    for (unsigned int y = 0; y < dims[1]; y++)
       {
-      for (unsigned int y = 0; y < dims[1]; y++)
+      unsigned char* pixel = static_cast<unsigned char*>(image->GetScalarPointer(x, y, 0));
+      if (components == 4)
         {
-        unsigned char* pixel = static_cast<unsigned char*>(image->GetScalarPointer(x, y, 0));
-        if (components == 4)
-          {
-          pixel[0] = 0;
-          pixel[1] = 0;
-          pixel[2] = 0;
-          pixel[3] = 255;
-          }
-        else
-          {
-          pixel[0] = 255;
-          }
+        pixel[0] = 0;
+        pixel[1] = 0;
+        pixel[2] = 0;
+        pixel[3] = 255;
+        }
+      else
+        {
+        pixel[0] = 255;
         }
       }
+    }
 
-    image->Modified();
+  image->Modified();
 }
 
 //----------------------------------------------------------------------------
