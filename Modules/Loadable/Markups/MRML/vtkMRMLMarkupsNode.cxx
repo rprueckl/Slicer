@@ -1227,6 +1227,20 @@ std::string vtkMRMLMarkupsNode::GenerateUniqueMarkupID()
 
   if (this->Scene)
     {
+    int highestNumber = -1;
+    for (int i = 0; i < Markups.size(); i++)
+      {
+      highestNumber = std::max(std::stoi(Markups[i].ID.substr(strlen(this->GetClassName()) + 1)), highestNumber);
+      }
+    highestNumber++;
+
+    std::stringstream ss;
+    ss << this->GetClassName() << "_";
+    ss << highestNumber;
+    ss >> id;
+
+    /* COMMENTED BY PRUECKL - DOES NOT WORK AS THE MARKUP IDs
+    ARE NOT RETURNED BY THE Scene->GenerateUniqueName CHECK FOR UNIQUENESS
     // base it on the class of this node so that they're unique across lists
     id = this->Scene->GenerateUniqueName(this->GetClassName());
     // the first time this is called, the return will be the bare class name
@@ -1236,6 +1250,7 @@ std::string vtkMRMLMarkupsNode::GenerateUniqueMarkupID()
       {
       id = id + std::string("_0");
       }
+    */
     }
   else
     {
