@@ -159,7 +159,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
   splashMessage(splashScreen, "Initializing user interface...");
   if (enableMainWindow)
     {
-    window.reset(new SlicerMainWindowType);
+    //window.reset(new SlicerMainWindowType);
     }
   else if (app.commandOptions()->showPythonInteractor()
     && !app.commandOptions()->runPythonAndExit())
