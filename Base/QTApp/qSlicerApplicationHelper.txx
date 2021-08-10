@@ -111,7 +111,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
   if (showSplashScreen)
     {
     QPixmap pixmap(":/SplashScreen.png");
-    splashScreen.reset(new QSplashScreen(pixmap));
+    //splashScreen.reset(new QSplashScreen(pixmap));
     splashMessage(splashScreen, "Initializing...");
     splashScreen->show();
     }
