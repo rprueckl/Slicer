@@ -1755,6 +1755,101 @@ void vtkMRMLSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int widt
 }
 
 //----------------------------------------------------------------------------
+// adjust the node's field of view to match the extent of all layer's volumes
+void vtkMRMLSliceLogic::FitSliceToVolumes(int width, int height)
+{
+  vtkMRMLVolumeNode *volumeNode;
+  double volumeSliceSpacing = -1.0;
+  for (int layer = 0; layer < 3; layer++)
+    {
+    volumeNode = this->GetLayerVolumeNode(layer);
+    if (volumeNode && volumeNode->GetImageData())
+      {
+      volumeSliceSpacing = this->GetVolumeSliceSpacing(volumeNode)[2];
+      break;
+      }
+    }
+
+  if (volumeSliceSpacing < 0.0)
+    {
+    return;
+    }
+
+  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+
+  if (!sliceNode)
+    {
+    return;
+    }
+
+  double sliceDimensionsAllLayers[3];
+  double sliceBounds[6];
+  GetSliceBounds(sliceBounds); // get slice bounds over all layers
+
+  for (int i = 0; i < 3; i++)
+    {
+    sliceDimensionsAllLayers[i] = sliceBounds[2 * i + 1] - sliceBounds[2 * i];
+    }
+
+  double rasCenterAllLayers[3];
+  double rasBounds[6];
+  GetRASBounds(rasBounds);
+
+  for (int i = 0; i < 3; i++)
+    {
+    rasCenterAllLayers[i] = 0.5*(rasBounds[2 * i + 1] + rasBounds[2 * i]);
+    }
+
+  double fitX, fitY, fitZ, displayX, displayY;
+  displayX = fitX = fabs(sliceDimensionsAllLayers[0]);
+  displayY = fitY = fabs(sliceDimensionsAllLayers[1]);
+  fitZ = volumeSliceSpacing * sliceNode->GetDimensions()[2];
+
+  // fit fov to min dimension of window
+  double pixelSize;
+  if (height > width)
+    {
+    pixelSize = fitX / (1.0 * width);
+    fitY = pixelSize * height;
+    }
+  else
+    {
+    pixelSize = fitY / (1.0 * height);
+    fitX = pixelSize * width;
+    }
+
+  // if volume is still too big, shrink some more
+  if (displayX > fitX)
+    {
+    fitY = fitY / (fitX / (displayX * 1.0));
+    fitX = displayX;
+    }
+  if (displayY > fitY)
+    {
+    fitX = fitX / (fitY / (displayY * 1.0));
+    fitY = displayY;
+    }
+
+  sliceNode->SetFieldOfView(fitX, fitY, fitZ);
+
+  //
+  // set the origin to be the center of the volume in RAS
+  //
+  vtkNew<vtkMatrix4x4> sliceToRAS;
+  sliceToRAS->DeepCopy(sliceNode->GetSliceToRAS());
+  sliceToRAS->SetElement(0, 3, rasCenterAllLayers[0]);
+  sliceToRAS->SetElement(1, 3, rasCenterAllLayers[1]);
+  sliceToRAS->SetElement(2, 3, rasCenterAllLayers[2]);
+  sliceNode->GetSliceToRAS()->DeepCopy(sliceToRAS.GetPointer());
+  sliceNode->SetSliceOrigin(0, 0, 0);
+  //sliceNode->SetSliceOffset(offset);
+
+  //TODO Fit UVW space
+  this->SnapSliceOffsetToIJK();
+  sliceNode->UpdateMatrices();
+}
+
+//----------------------------------------------------------------------------
 // Get the size of the volume, transformed to RAS space
 void vtkMRMLSliceLogic::GetBackgroundRASBox(double rasDimensions[3], double rasCenter[3])
 {
@@ -1817,7 +1912,9 @@ void vtkMRMLSliceLogic::FitSliceToAll(int width, int height)
     return;
     }
 
-  vtkMRMLVolumeNode *volumeNode;
+  this->FitSliceToVolumes(width, height);
+
+  /*vtkMRMLVolumeNode *volumeNode;
   for ( int layer=0; layer < 3; layer++ )
     {
     volumeNode = this->GetLayerVolumeNode (layer);
@@ -1826,7 +1923,7 @@ void vtkMRMLSliceLogic::FitSliceToAll(int width, int height)
       this->FitSliceToVolume( volumeNode, width, height );
       return;
       }
-    }
+    }*/
 }
 
 //----------------------------------------------------------------------------
@@ -2025,6 +2122,52 @@ void vtkMRMLSliceLogic::GetSliceBounds(double sliceBounds[6])
       }
     }
 
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::GetRASBounds(double rasBounds[6])
+{
+  int i;
+  for (i = 0; i < 3; i++)
+    {
+    rasBounds[2 * i] = LARGE_BOUNDS_NUM;
+    rasBounds[2 * i + 1] = SMALL_BOUNDS_NUM;
+    }
+
+  vtkMRMLVolumeNode *volumeNode;
+  for (int layer = 0; layer < 3; layer++)
+    {
+    volumeNode = this->GetLayerVolumeNode(layer);
+    if (volumeNode)
+      {
+      double bounds[6];
+      volumeNode->GetRASBounds(bounds);
+      for (i = 0; i < 3; i++)
+        {
+        if (bounds[2 * i] < rasBounds[2 * i])
+          {
+          rasBounds[2 * i] = bounds[2 * i];
+          }
+        if (bounds[2 * i + 1] > rasBounds[2 * i + 1])
+          {
+          rasBounds[2 * i + 1] = bounds[2 * i + 1];
+          }
+        }
+      }
+    }
+
+  // default
+  for (i = 0; i < 3; i++)
+    {
+    if (rasBounds[2 * i] == LARGE_BOUNDS_NUM)
+      {
+      rasBounds[2 * i] = -100;
+      }
+    if (rasBounds[2 * i + 1] == SMALL_BOUNDS_NUM)
+      {
+      rasBounds[2 * i + 1] = 100;
+      }
+    }
 }
 
 //----------------------------------------------------------------------------

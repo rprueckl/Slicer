@@ -148,6 +148,7 @@ public:
   /// update the pipeline to reflect the current state of the nodes
   void UpdatePipeline();
 
+  ///
   /// Internally used by UpdatePipeline
   void UpdateImageData();
 
@@ -195,6 +196,10 @@ public:
   ///
   /// adjust the node's field of view to match the extent of current background volume
   void FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int width, int height);
+
+  ///
+  /// adjust the node's field of view to match the extent of all layer's volumes
+  void FitSliceToVolumes(int width, int height);
 
   ///
   /// Get the size of the volume, transformed to RAS space
@@ -258,6 +263,10 @@ public:
   ///
   /// Get the largest slice bounding box for all volumes in layers
   void GetSliceBounds(double sliceBounds[6]);
+
+  ///
+  /// Get the largest ras bounding box for all volumes in layers
+  void GetRASBounds(double rasBounds[6]);
 
   ///
   /// Set slice extents to all layers
