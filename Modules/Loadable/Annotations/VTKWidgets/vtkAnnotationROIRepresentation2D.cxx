@@ -270,19 +270,19 @@ void vtkAnnotationROIRepresentation2D::CreateDefaultProperties()
     }
 
   // lavender
-  this->HandleProperties2D[0]->SetColor(.781, .633, .867);
+  this->HandleProperties2D[0]->SetColor(1.0, 0.255, 0.212);
   // dark violet
-  this->HandleProperties2D[1]->SetColor(.5585, .343, .91);
+  this->HandleProperties2D[1]->SetColor(1.0, 0.255, 0.212);
   // dark red
-  this->HandleProperties2D[2]->SetColor(.75, .121, .26953);
+  this->HandleProperties2D[2]->SetColor(1.0, 0.255, 0.212);
   // orange
-  this->HandleProperties2D[3]->SetColor(.9765, .488, .1133);
+  this->HandleProperties2D[3]->SetColor(1.0, 0.255, 0.212);
   // dark blue
-  this->HandleProperties2D[4]->SetColor(.1328, .4531, .5351);
+  this->HandleProperties2D[4]->SetColor(1.0, 0.255, 0.212);
   // light blue
-  this->HandleProperties2D[5]->SetColor(.582, .898, .871);
+  this->HandleProperties2D[5]->SetColor(1.0, 0.255, 0.212);
   // yellow
-  this->HandleProperties2D[6]->SetColor(0.973125, .798281, 0.0);
+  this->HandleProperties2D[6]->SetColor(1.0, 0.255, 0.212);
 
   this->SelectedHandleProperty2D = vtkProperty2D::New();
   this->SelectedHandleProperty2D->SetColor(.2,1,.2);

@@ -714,19 +714,19 @@ void vtkAnnotationROIRepresentation::CreateDefaultProperties()
     }
 
   // lavender
-  this->HandleProperties[0]->SetColor(.781, .633, .867);
+  this->HandleProperties[0]->SetColor(1.0, 0.255, 0.212);
   // dark violet
-  this->HandleProperties[1]->SetColor(.5585, .343, .91);
+  this->HandleProperties[1]->SetColor(1.0, 0.255, 0.212);
   // dark red
-  this->HandleProperties[2]->SetColor(.75, .121, .26953);
+  this->HandleProperties[2]->SetColor(1.0, 0.255, 0.212);
   // orange
-  this->HandleProperties[3]->SetColor(.9765, .588, .1133);
+  this->HandleProperties[3]->SetColor(1.0, 0.255, 0.212);
   // dark turquoise
-  this->HandleProperties[4]->SetColor(.1328, .4531, .5351);
+  this->HandleProperties[4]->SetColor(1.0, 0.255, 0.212);
   // cyan
-  this->HandleProperties[5]->SetColor(.582, .898, .871);
+  this->HandleProperties[5]->SetColor(1.0, 0.255, 0.212);
   // yellow
-  this->HandleProperties[6]->SetColor(0.973125, .898281, 0.2);
+  this->HandleProperties[6]->SetColor(1.0, 0.255, 0.212);
 
   this->SelectedHandleProperty = vtkProperty::New();
   // green
@@ -1075,6 +1075,10 @@ int vtkAnnotationROIRepresentation::ComputeInteractionState(int X, int Y, int vt
       {
       this->InteractionState = vtkAnnotationROIRepresentation::Translating;
       }
+    }
+  else
+    {
+    this->InteractionState = vtkAnnotationROIRepresentation::Outside;
     }
 
   return this->InteractionState;
