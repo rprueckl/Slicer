@@ -20,6 +20,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLTransformNode.h>
+#include <vtkMRMLDisplayNode.h>
 
 // VTK includes
 #include <vtkAbstractWidget.h>
@@ -552,8 +553,14 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   plane->SetNormal(normal);
   plane->SetOrigin(origin);
 
-  rep->SetSliceIntersectionVisibility(roiNode->GetDisplayVisibility() ? 1:0);
-  rep->SetHandlesVisibility(roiNode->GetLocked()==0 && roiNode->GetDisplayVisibility() ? 1:0);
+  bool visible = true;
+  for (int i = 0; i < roiNode->GetNumberOfDisplayNodes(); i++)
+    {
+    visible = visible && roiNode->GetNthDisplayNode(i)->GetVisibility(this->GetSliceNode()->GetID());
+    }
+
+  rep->SetSliceIntersectionVisibility(visible);
+  rep->SetHandlesVisibility(roiNode->GetLocked()==0 && visible);
 
   rep->PlaceWidget(b);
 
