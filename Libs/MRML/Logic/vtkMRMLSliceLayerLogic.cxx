@@ -315,6 +315,13 @@ void vtkMRMLSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   vtkSetAndObserveMRMLNodeEventsMacro(this->VolumeNode, volumeNode, events.GetPointer());
 
+  if (VolumeNode)
+  {
+      double range[2];
+      VolumeNode->GetImageData()->GetScalarRange(range);
+      Reslice->SetBackgroundLevel(range[0] - 10);
+  }
+
   // Update the reslice transform to move this image into XY
   this->UpdateTransforms();
   this->UpdateImageDisplay();
