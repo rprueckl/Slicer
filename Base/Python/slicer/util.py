@@ -184,7 +184,7 @@ def lookupTopLevelWidget(objectName, verbose = True):
   return None
 
 def mainWindow(verbose = True):
-  return lookupTopLevelWidget('qSlicerMainWindow', verbose)
+  return lookupTopLevelWidget('CORTEXPLORER_MAIN_WINDOW', verbose)
 
 def pythonShell(verbose = True):
   from slicer import app
