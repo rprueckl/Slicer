@@ -1769,6 +1769,13 @@ vtkMRMLInteractionNode* qMRMLSegmentEditorWidget::interactionNode()const
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::invalidateMasterVolumeNodeComboBoxModel()
+{
+  Q_D(const qMRMLSegmentEditorWidget);
+  d->MasterVolumeNodeComboBox->sortFilterProxyModel()->invalidate();
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::setInteractionNode(vtkMRMLInteractionNode* interactionNode)
 {
   Q_D(qMRMLSegmentEditorWidget);

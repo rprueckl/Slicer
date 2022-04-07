@@ -194,6 +194,9 @@ public:
   /// \sa SetInteractionNode()
   Q_INVOKABLE vtkMRMLInteractionNode* interactionNode() const;
 
+  /// Utility method to update the model of the MasterVolumeNodeComboBox
+  Q_INVOKABLE void invalidateMasterVolumeNodeComboBoxModel();
+
 public slots:
   /// Set the MRML \a scene associated with the widget
   virtual void setMRMLScene(vtkMRMLScene* newScene);
