@@ -138,6 +138,9 @@ public:
   /// \sa GetStoredTime() StorableModifiedTime Modified() GetModifiedSinceRead()
   virtual void StorableModified();
 
+  /// Allows to check the time when the storable was last modified.
+  virtual vtkTimeStamp GetStorableModifiedTime();
+
  protected:
   vtkMRMLStorableNode();
   ~vtkMRMLStorableNode();

@@ -391,6 +391,12 @@ void vtkMRMLStorableNode::StorableModified()
 }
 
 //---------------------------------------------------------------------------
+vtkTimeStamp vtkMRMLStorableNode::GetStorableModifiedTime()
+{
+  return this->StorableModifiedTime;
+}
+
+//---------------------------------------------------------------------------
 vtkTimeStamp vtkMRMLStorableNode::GetStoredTime()
 {
   vtkTimeStamp storedTime;
